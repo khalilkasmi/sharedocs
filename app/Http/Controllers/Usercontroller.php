@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Document;
 use Illuminate\Http\Request;
 
-class DocumentController extends Controller
+class Usercontroller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +13,7 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        return Document::all();
+        //
     }
 
     /**
@@ -24,7 +23,7 @@ class DocumentController extends Controller
      */
     public function create()
     {
-        return view('add_document');
+        //
     }
 
     /**
@@ -35,15 +34,7 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
-        $tags = explode(',',$request->tags);
-        $document = new Document();
-        $document->title = $request->input('title');
-        $document->description = $request->input('description');
-        $document->path = $request->file('document')->store('uploads');
-        $document->create();
-        $document->tag($tags);
-
-        return back();
+        //
     }
 
     /**

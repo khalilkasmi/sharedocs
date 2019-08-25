@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::prefix('document')->group(function (){
+    Route::get('add','documentController@create');
+    Route::post('upload','documentController@store');
+});
