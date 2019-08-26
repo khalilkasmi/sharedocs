@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Document;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -14,7 +15,9 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        return Document::all();
+        $documents =  Document::orderBy('created_at','desc')->get();
+        
+        return view('welcome')->with('documents',$documents);
     }
 
     /**
@@ -35,15 +38,22 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
-        $tags = explode(',',$request->tags);
-        $document = new Document();
-        $document->title = $request->input('title');
-        $document->description = $request->input('description');
-        $document->path = $request->file('document')->store('uploads');
-        $document->create();
-        $document->tag($tags);
+        //$str = $request->description.' '.$request->title;
+        //$tags = explode(' ',$str);
+        
+        $document = new Document;
 
-        return back();
+        $document->title = $request->title;
+        $document->description = $request->description;
+        
+        $document->path = $request->file('document')->store('uploads');
+
+        $document->save();
+
+        $documents = Document::all();
+
+        return view('welcome')->with('documents',$documents);
+
     }
 
     /**
@@ -54,7 +64,8 @@ class DocumentController extends Controller
      */
     public function show($id)
     {
-        //
+        $document = Document::find($id);
+        return Storage::Download($document->path);;
     }
 
     /**
@@ -65,7 +76,9 @@ class DocumentController extends Controller
      */
     public function edit($id)
     {
-        //
+        $document = Document::find($id);
+        $file_url = Storage::Download($document->path);
+        return view('update_document')->with(['document'=>$document,'path'=>$file_url]);
     }
 
     /**
@@ -77,7 +90,17 @@ class DocumentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $document = Document::find($id);
+
+       $document->title = $request->title;
+        $document->description = $request->description;
+        
+        $document->path = $request->file('document')->store('uploads');
+
+        $document->update();
+
+        //$document->tag($tags);
+
     }
 
     /**
@@ -88,6 +111,19 @@ class DocumentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $doc = Document::find($id);
+        $doc->delete();
+        $documents = Document::all();
+
+        return view('welcome')->with('documents',$documents);
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->get('keyword');
+        $documents = Document::where('title','like','%'.$keyword.'%')
+        ->orWhere('description','like','%'.$keyword.'%');  
+        
+        return view('welcome')->with('documents',$documents);
     }
 }

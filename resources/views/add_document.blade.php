@@ -1,4 +1,4 @@
-@extends('welcome')
+@extends('layouts.main')
 
 @section('content')
 
@@ -8,7 +8,6 @@
         <input type="text" placeholder="document's title" name="title">
         <input type="decription" placeholder="document's description" name="description">
         <input type="file"  name="document">
-        <input type="text"  name="tags">
         <button type="submit">add</button>
     </form>
 @endsection
